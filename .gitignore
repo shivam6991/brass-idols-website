@@ -13,6 +13,10 @@ site-single-file.html
 *.swp
 *~
 
+# Node — test dependencies only, the site itself needs none
+node_modules/
+package-lock.json
+
 # Python
 __pycache__/
 *.pyc

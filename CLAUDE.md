@@ -71,8 +71,24 @@ build.py                   optional: bundles everything into site-single-file.ht
 
 ## Testing
 
-There is a jsdom smoke suite of 86 checks covering rendering, filters, sorting,
-the enquiry list, reviews, all five languages, the top-bar layout, and the QR
-(including a comparison against an independent encoder). It currently lives
-outside the repo. If you are asked to change behaviour, ask for it to be moved
-in — `npm i jsdom` and run it against `site-single-file.html`.
+```
+npm install && npm test
+```
+
+86 checks in `test/smoke.mjs`, run against the **real source files** — no build
+step, so what is tested is what ships. Covers rendering, filters, sorting, the
+enquiry list, reviews, all five languages, the top-bar layout, and the QR
+(including a module-by-module comparison against a fixture produced by an
+unrelated encoder).
+
+`jsdom` and `qrcode-generator` are devDependencies. **The site itself has no
+dependencies** — do not add any runtime ones.
+
+Two traps the harness itself hit, worth knowing before editing it:
+
+- `String.replace` with a replacement *string* treats `$$` as an escaped `$`.
+  app.js declares `const $$ = ...`, so inlining it that way silently produces a
+  duplicate `const $`. `composePage()` always replaces via a function.
+- `test/fixtures/qr-reference.json` is tied to the phone number in `data.js`.
+  Change the number and the suite says so rather than comparing against a stale
+  fixture; regenerate it with segno if that happens.
