@@ -1,0 +1,908 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex, nofollow">
+<title>Shop admin — Kaanchan Brass</title>
+<style>
+  /* ------------------------------------------------------------------ *
+     Admin editor. Self-contained, no framework, no dependencies — same
+     rule as the rest of the site. It reads the live data from data.js,
+     lets you edit it on a phone, and writes out a correct data.js for
+     you to paste back into GitHub. It never changes the site by itself.
+   * ------------------------------------------------------------------ */
+  :root{
+    --brass:#A9762A; --brass-deep:#8a5f20;
+    --sand:#FBF5E9; --sand-2:#F3E9D5; --sand-line:#E2D0AF; --sand-deep:#d8c39a;
+    --ink:#2b2118; --ink-mid:#6b5c48; --ink-soft:#8c7a64;
+    --ok:#2e7d32; --bad:#c0392b; --card:#fff;
+    --radius:12px; --shadow:0 1px 3px rgba(43,33,24,.09),0 6px 20px rgba(43,33,24,.06);
+  }
+  *{box-sizing:border-box}
+  html{-webkit-text-size-adjust:100%}
+  body{
+    margin:0; background:var(--sand); color:var(--ink);
+    font:16px/1.5 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;
+    padding-bottom:6rem;
+  }
+  a{color:var(--brass-deep)}
+  h1,h2,h3{margin:0;font-weight:600;line-height:1.2}
+  .wrap{max-width:860px;margin:0 auto;padding:0 1rem}
+
+  header.top{
+    background:var(--ink); color:var(--sand);
+    padding:1rem 0; position:sticky; top:0; z-index:20;
+    box-shadow:0 2px 12px rgba(0,0,0,.18);
+  }
+  header.top .wrap{display:flex;align-items:center;gap:.7rem;flex-wrap:wrap}
+  .logo{font-size:1.15rem;font-weight:600;letter-spacing:.01em}
+  .logo b{color:var(--brass)}
+  .top-note{font-size:.8rem;color:#cbb98f;margin-left:auto}
+
+  /* tabs */
+  nav.tabs{
+    position:sticky; top:56px; z-index:15; background:var(--sand-2);
+    border-bottom:1px solid var(--sand-line); overflow-x:auto; -webkit-overflow-scrolling:touch;
+  }
+  nav.tabs .wrap{display:flex;gap:.25rem;padding:0 1rem}
+  .tab{
+    appearance:none;border:0;background:none;font:inherit;font-size:.95rem;
+    padding:.85rem .9rem;color:var(--ink-mid);cursor:pointer;white-space:nowrap;
+    border-bottom:2.5px solid transparent;
+  }
+  .tab[aria-selected="true"]{color:var(--ink);border-bottom-color:var(--brass);font-weight:600}
+
+  main{padding-top:1.3rem}
+  .panel[hidden]{display:none}
+  .panel-head{margin-bottom:1rem}
+  .panel-head h2{font-size:1.35rem}
+  .panel-head p{margin:.35rem 0 0;color:var(--ink-mid);font-size:.92rem}
+
+  .card{
+    background:var(--card); border:1px solid var(--sand-line); border-radius:var(--radius);
+    box-shadow:var(--shadow); padding:1rem; margin-bottom:1rem;
+  }
+  .card-top{display:flex;align-items:center;gap:.6rem;margin-bottom:.8rem}
+  .card-top .idx{
+    font-size:.72rem;font-weight:600;color:var(--ink-soft);background:var(--sand-2);
+    border-radius:20px;padding:.15rem .55rem;white-space:nowrap;
+  }
+  .card-top .title{font-weight:600;font-size:1rem;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;flex:1}
+  .card-top .tools{display:flex;gap:.3rem}
+
+  label{display:block;font-size:.78rem;font-weight:600;color:var(--ink-mid);margin:0 0 .25rem}
+  label .hint{font-weight:400;color:var(--ink-soft)}
+  input,select,textarea{
+    width:100%;font:inherit;font-size:.95rem;color:var(--ink);
+    background:#fff;border:1px solid var(--sand-deep);border-radius:8px;padding:.55rem .6rem;
+  }
+  input:focus,select:focus,textarea:focus{outline:2px solid var(--brass);outline-offset:0;border-color:var(--brass)}
+  textarea{min-height:4.5rem;resize:vertical;line-height:1.45}
+  .field{margin-bottom:.75rem}
+  .row{display:grid;gap:.75rem}
+  @media(min-width:560px){
+    .row.c2{grid-template-columns:1fr 1fr}
+    .row.c3{grid-template-columns:1fr 1fr 1fr}
+  }
+  .inline{display:flex;align-items:center;gap:.5rem}
+  .inline input[type=checkbox]{width:auto;transform:scale(1.25);margin:0 .2rem}
+  .field-err input,.field-err select,.field-err textarea{border-color:var(--bad);background:#fff6f5}
+  .err-msg{color:var(--bad);font-size:.78rem;margin:.25rem 0 0}
+
+  .btn{
+    appearance:none;font:inherit;font-weight:600;font-size:.9rem;cursor:pointer;
+    border-radius:8px;padding:.6rem .9rem;border:1px solid transparent;
+    display:inline-flex;align-items:center;gap:.4rem;justify-content:center;
+  }
+  .btn-primary{background:var(--brass);color:#fff;border-color:var(--brass)}
+  .btn-primary:hover{background:var(--brass-deep)}
+  .btn-ghost{background:#fff;color:var(--ink);border-color:var(--sand-deep)}
+  .btn-ghost:hover{background:var(--sand-2)}
+  .btn-sm{padding:.4rem .6rem;font-size:.82rem}
+  .btn-icon{padding:.4rem .5rem;background:#fff;border-color:var(--sand-deep);color:var(--ink-mid)}
+  .btn-icon:hover{background:var(--sand-2);color:var(--ink)}
+  .btn-icon:disabled{opacity:.35;cursor:default}
+  .btn-danger{color:var(--bad);border-color:#e7bdb7}
+  .btn-danger:hover{background:#fdeeec}
+  .btn-block{width:100%}
+  .add-row{margin:.5rem 0 1.5rem}
+
+  .badge-line{display:flex;gap:.5rem;flex-wrap:wrap;align-items:center}
+  .pill{font-size:.72rem;font-weight:600;padding:.2rem .55rem;border-radius:20px;background:var(--sand-2);color:var(--ink-mid)}
+  .pill.out{background:#fdeeec;color:var(--bad)}
+  .pill.ok{background:#eaf6ea;color:var(--ok)}
+
+  .note{font-size:.82rem;color:var(--ink-mid);background:var(--sand-2);border:1px solid var(--sand-line);border-radius:10px;padding:.7rem .8rem;margin-bottom:1rem}
+  .note b{color:var(--ink)}
+
+  /* save bar */
+  .savebar{
+    position:fixed;left:0;right:0;bottom:0;background:#fff;border-top:1px solid var(--sand-line);
+    box-shadow:0 -3px 16px rgba(43,33,24,.09);padding:.7rem 0;z-index:30;
+  }
+  .savebar .wrap{display:flex;gap:.5rem;align-items:center}
+  .savebar .status{font-size:.82rem;color:var(--ink-mid);flex:1;min-width:0}
+  .savebar .status.bad{color:var(--bad);font-weight:600}
+  .savebar .status.ok{color:var(--ok);font-weight:600}
+
+  dialog{
+    border:0;border-radius:14px;padding:0;max-width:720px;width:calc(100% - 1.5rem);
+    box-shadow:0 12px 50px rgba(0,0,0,.35);color:var(--ink);
+  }
+  dialog::backdrop{background:rgba(43,33,24,.5)}
+  .dlg-head{padding:1rem 1.1rem;border-bottom:1px solid var(--sand-line);display:flex;align-items:center;gap:.6rem}
+  .dlg-head h3{font-size:1.1rem;flex:1}
+  .dlg-body{padding:1.1rem}
+  .dlg-actions{display:flex;gap:.5rem;flex-wrap:wrap;margin-bottom:1rem}
+  #outCode{
+    width:100%;min-height:260px;font:13px/1.5 ui-monospace,"SF Mono",Menlo,Consolas,monospace;
+    white-space:pre;overflow:auto;background:#faf7f0;border:1px solid var(--sand-line);border-radius:10px;padding:.7rem;
+  }
+  .steps{font-size:.9rem;color:var(--ink-mid);padding-left:1.2rem;margin:.2rem 0 1rem}
+  .steps li{margin:.3rem 0}
+
+  .toast{
+    position:fixed;left:50%;bottom:5.2rem;transform:translateX(-50%) translateY(1rem);
+    background:var(--ink);color:#fff;padding:.6rem 1rem;border-radius:10px;font-size:.9rem;
+    opacity:0;pointer-events:none;transition:.25s;z-index:50;box-shadow:0 6px 20px rgba(0,0,0,.3);
+  }
+  .toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+
+  .empty{color:var(--ink-soft);text-align:center;padding:2rem 1rem;font-size:.92rem}
+  .uspitem,.deityitem,.reviewitem{border:1px dashed var(--sand-deep);border-radius:10px;padding:.75rem;margin-bottom:.6rem;background:#fffdf8}
+  .settings-open{background:none;border:0;color:#cbb98f;font-size:.8rem;cursor:pointer;text-decoration:underline}
+</style>
+</head>
+<body>
+
+<header class="top">
+  <div class="wrap">
+    <span class="logo"><b>◆</b> Shop admin</span>
+    <button class="settings-open" id="openSettings" type="button">Repo settings</button>
+    <span class="top-note" id="loadNote">loading…</span>
+  </div>
+</header>
+
+<nav class="tabs" aria-label="Sections">
+  <div class="wrap">
+    <button class="tab" role="tab" data-tab="products" aria-selected="true">Products</button>
+    <button class="tab" role="tab" data-tab="shop" aria-selected="false">Shop details</button>
+    <button class="tab" role="tab" data-tab="deities" aria-selected="false">Deities</button>
+    <button class="tab" role="tab" data-tab="reviews" aria-selected="false">Reviews</button>
+  </div>
+</nav>
+
+<main class="wrap">
+
+  <div class="note" id="loadWarn" hidden>
+    <b>Couldn't read your current data.</b> Open this page from the site itself
+    (for example <code>yoursite.com/admin.html</code>), not as a bare file, so it
+    can load <code>assets/js/data.js</code>.
+  </div>
+
+  <!-- ================= PRODUCTS ================= -->
+  <section class="panel" id="panel-products">
+    <div class="panel-head">
+      <h2>Products</h2>
+      <p>Add, remove or reorder idols and change prices. The order here is the order shown on the site.</p>
+    </div>
+    <div class="note">
+      <b>Photos:</b> type the photo file name(s) in the Photos box, then upload the
+      matching image to <code>assets/img/products/</code> in GitHub. Leave Photos empty
+      and the site draws a neat placeholder automatically.
+    </div>
+    <div id="productList"></div>
+    <div class="add-row"><button class="btn btn-ghost btn-block" id="addProduct" type="button">+ Add a product</button></div>
+  </section>
+
+  <!-- ================= SHOP ================= -->
+  <section class="panel" id="panel-shop" hidden>
+    <div class="panel-head">
+      <h2>Shop details</h2>
+      <p>Your name, phone number, address and the promises shown under the hero.</p>
+    </div>
+    <div id="shopForm"></div>
+  </section>
+
+  <!-- ================= DEITIES ================= -->
+  <section class="panel" id="panel-deities" hidden>
+    <div class="panel-head">
+      <h2>Deities</h2>
+      <p>The categories used for the tiles and the filter. Each product's “Deity” must match a name here.</p>
+    </div>
+    <div id="deityList"></div>
+    <div class="add-row"><button class="btn btn-ghost btn-block" id="addDeity" type="button">+ Add a deity</button></div>
+  </section>
+
+  <!-- ================= REVIEWS ================= -->
+  <section class="panel" id="panel-reviews" hidden>
+    <div class="panel-head">
+      <h2>Reviews</h2>
+      <p>Reviews shown on the site. Customers' own reviews stay on their phone until you add them here.</p>
+    </div>
+    <div id="reviewList"></div>
+    <div class="add-row"><button class="btn btn-ghost btn-block" id="addReview" type="button">+ Add a review</button></div>
+  </section>
+
+</main>
+
+<!-- ================= SAVE BAR ================= -->
+<div class="savebar">
+  <div class="wrap">
+    <span class="status" id="saveStatus">Edit anything, then Save changes.</span>
+    <button class="btn btn-primary" id="saveBtn" type="button">Save changes</button>
+  </div>
+</div>
+
+<!-- ================= OUTPUT DIALOG ================= -->
+<dialog id="outDlg">
+  <div class="dlg-head">
+    <h3>Save to your website</h3>
+    <button class="btn btn-icon" id="outClose" type="button" aria-label="Close">✕</button>
+  </div>
+  <div class="dlg-body">
+    <ol class="steps">
+      <li>Tap <b>Copy</b> below.</li>
+      <li>Tap <b>Open GitHub</b> — it opens the file editor.</li>
+      <li>Select everything already there, delete it, and paste.</li>
+      <li>Scroll down and tap <b>Commit changes</b>. Your site updates in a minute or two.</li>
+    </ol>
+    <div class="dlg-actions">
+      <button class="btn btn-primary" id="copyBtn" type="button">Copy</button>
+      <a class="btn btn-ghost" id="ghLink" href="#" target="_blank" rel="noopener">Open GitHub ↗</a>
+      <button class="btn btn-ghost" id="downloadBtn" type="button">Download file</button>
+    </div>
+    <textarea id="outCode" readonly spellcheck="false"></textarea>
+  </div>
+</dialog>
+
+<!-- ================= SETTINGS DIALOG ================= -->
+<dialog id="setDlg">
+  <div class="dlg-head">
+    <h3>Repo settings</h3>
+    <button class="btn btn-icon" id="setClose" type="button" aria-label="Close">✕</button>
+  </div>
+  <div class="dlg-body">
+    <p style="margin-top:0;color:var(--ink-mid);font-size:.9rem">
+      Used only to build the “Open GitHub” link. Nothing is sent anywhere; this is
+      saved on this device.
+    </p>
+    <div class="field">
+      <label for="setRepo">Repository <span class="hint">owner/name</span></label>
+      <input id="setRepo" type="text" placeholder="shivam6991/brass-idols-website">
+    </div>
+    <div class="field">
+      <label for="setBranch">Branch</label>
+      <input id="setBranch" type="text" placeholder="main">
+    </div>
+    <button class="btn btn-primary" id="setSave" type="button">Save settings</button>
+  </div>
+</dialog>
+
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+<!-- Read the live data. If this fails the page shows the warning above. -->
+<script src="assets/js/data.js"></script>
+<script>
+"use strict";
+/* ==========================================================================
+   State — deep copies of the live data so editing never touches the originals.
+   ========================================================================== */
+var DEFAULT_REPO = "shivam6991/brass-idols-website";
+var DEFAULT_BRANCH = "main";
+
+var loaded = (typeof PRODUCTS !== "undefined" && typeof SHOP !== "undefined");
+var clone = function (x) { return JSON.parse(JSON.stringify(x)); };
+var uidSeq = 1;
+var uid = function () { return "u" + (uidSeq++); };
+
+var state = {
+  shop:     loaded ? clone(SHOP)     : {},
+  products: loaded ? clone(PRODUCTS) : [],
+  deities:  loaded ? clone(DEITIES)  : [],
+  reviews:  loaded ? clone(REVIEWS)  : []
+};
+// give every list row a stable key for the DOM
+state.products.forEach(function (p) { p._uid = uid(); });
+state.deities.forEach(function (d) { d._uid = uid(); });
+state.reviews.forEach(function (r) { r._uid = uid(); });
+if (!Array.isArray(state.shop.usps)) state.shop.usps = [];
+state.shop.usps.forEach(function (u) { u._uid = uid(); });
+
+/* ---------- tiny helpers ---------- */
+function $(sel, root) { return (root || document).querySelector(sel); }
+function el(tag, attrs, html) {
+  var n = document.createElement(tag);
+  if (attrs) for (var k in attrs) { if (attrs[k] != null) n.setAttribute(k, attrs[k]); }
+  if (html != null) n.innerHTML = html;
+  return n;
+}
+function esc(s) {
+  return String(s == null ? "" : s).replace(/[&<>"']/g, function (c) {
+    return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c];
+  });
+}
+var toastTimer;
+function toast(msg) {
+  var t = $("#toast"); t.textContent = msg; t.classList.add("show");
+  clearTimeout(toastTimer); toastTimer = setTimeout(function () { t.classList.remove("show"); }, 2200);
+}
+
+/* ==========================================================================
+   Load state / warnings
+   ========================================================================== */
+if (loaded) {
+  $("#loadNote").textContent = state.products.length + " products loaded";
+} else {
+  $("#loadNote").textContent = "no data";
+  $("#loadWarn").hidden = false;
+}
+
+/* ==========================================================================
+   Tabs
+   ========================================================================== */
+document.querySelectorAll(".tab").forEach(function (btn) {
+  btn.addEventListener("click", function () {
+    document.querySelectorAll(".tab").forEach(function (b) { b.setAttribute("aria-selected", b === btn); });
+    document.querySelectorAll(".panel").forEach(function (p) { p.hidden = true; });
+    $("#panel-" + btn.dataset.tab).hidden = false;
+    window.scrollTo(0, 0);
+  });
+});
+
+/* ==========================================================================
+   Deity option list (shared by product editor)
+   ========================================================================== */
+function deityOptions(selected) {
+  var opts = state.deities.map(function (d) {
+    return '<option value="' + esc(d.name) + '"' + (d.name === selected ? " selected" : "") + ">" + esc(d.name) + "</option>";
+  }).join("");
+  // If the product points at a deity no longer in the list, keep it visible.
+  if (selected && !state.deities.some(function (d) { return d.name === selected; })) {
+    opts = '<option value="' + esc(selected) + '" selected>' + esc(selected) + " (not in list)</option>" + opts;
+  }
+  return opts;
+}
+
+/* ==========================================================================
+   PRODUCTS
+   ========================================================================== */
+function renderProducts() {
+  var host = $("#productList");
+  host.innerHTML = "";
+  if (!state.products.length) {
+    host.appendChild(el("div", { "class": "empty" }, "No products yet. Tap “Add a product”."));
+    return;
+  }
+  state.products.forEach(function (p, i) {
+    host.appendChild(productCard(p, i));
+  });
+}
+
+function productCard(p, i) {
+  var card = el("div", { "class": "card", "data-uid": p._uid });
+  var stockId = "stock-" + p._uid;
+  card.innerHTML =
+    '<div class="card-top">' +
+      '<span class="idx">#' + (i + 1) + '</span>' +
+      '<span class="title">' + esc(p.name || "(untitled)") + '</span>' +
+      '<span class="tools">' +
+        '<button class="btn btn-icon" data-act="up" ' + (i === 0 ? "disabled" : "") + ' aria-label="Move up">▲</button>' +
+        '<button class="btn btn-icon" data-act="down" ' + (i === state.products.length - 1 ? "disabled" : "") + ' aria-label="Move down">▼</button>' +
+        '<button class="btn btn-icon btn-danger" data-act="del" aria-label="Delete">🗑</button>' +
+      '</span>' +
+    '</div>' +
+    field("Name", "name", "text", p.name) +
+    '<div class="row c2">' +
+      fieldSelect("Deity", "deity", deityOptions(p.deity)) +
+      field("ID", "id", "text", p.id, "short, lowercase, no spaces") +
+    '</div>' +
+    '<div class="row c3">' +
+      field("Height (in)", "heightIn", "number", p.heightIn) +
+      field("Width (in)", "widthIn", "number", p.widthIn) +
+      field("Weight (kg)", "weightKg", "number", p.weightKg) +
+    '</div>' +
+    '<div class="row c2">' +
+      field("Price (₹)", "price", "number", p.price) +
+      field("MRP (₹)", "mrp", "number", (p.mrp == null ? "" : p.mrp), "crossed-out price, leave blank for none") +
+    '</div>' +
+    field("Finish", "finish", "text", p.finish) +
+    '<div class="row c2">' +
+      fieldSelect("Badge", "badge", badgeOptions(p.badge)) +
+      '<div class="field"><label for="' + stockId + '">Availability</label>' +
+        '<label class="inline" style="font-weight:400;color:var(--ink);font-size:.95rem">' +
+          '<input type="checkbox" id="' + stockId + '" data-field="stock" ' + (p.stock ? "checked" : "") + '> In stock now' +
+        '</label></div>' +
+    '</div>' +
+    field("Photos", "images", "text", (p.images || []).join(", "), "file names, comma separated") +
+    fieldArea("Blurb", "blurb", p.blurb) +
+    fieldArea("Details", "details", (p.details || []).join("\n"), "one per line");
+  return card;
+}
+
+function field(label, key, type, val, hint) {
+  return '<div class="field"><label>' + esc(label) + (hint ? ' <span class="hint">' + esc(hint) + "</span>" : "") + "</label>" +
+    '<input type="' + type + '" data-field="' + key + '" value="' + esc(val == null ? "" : val) + '"' +
+    (type === "number" ? ' inputmode="decimal" step="any"' : "") + "></div>";
+}
+function fieldArea(label, key, val, hint) {
+  return '<div class="field"><label>' + esc(label) + (hint ? ' <span class="hint">' + esc(hint) + "</span>" : "") + "</label>" +
+    '<textarea data-field="' + key + '">' + esc(val == null ? "" : val) + "</textarea></div>";
+}
+function fieldSelect(label, key, options) {
+  return '<div class="field"><label>' + esc(label) + "</label>" +
+    '<select data-field="' + key + '">' + options + "</select></div>";
+}
+function badgeOptions(cur) {
+  var list = ["", "New", "Bestseller", "Made to order"];
+  if (cur && list.indexOf(cur) < 0) list.push(cur);
+  return list.map(function (b) {
+    return '<option value="' + esc(b) + '"' + (b === cur ? " selected" : "") + ">" + (b ? esc(b) : "— none —") + "</option>";
+  }).join("");
+}
+
+// read a card's inputs back into its product object
+function syncProduct(card) {
+  var p = state.products.find(function (x) { return x._uid === card.dataset.uid; });
+  if (!p) return;
+  card.querySelectorAll("[data-field]").forEach(function (inp) {
+    var f = inp.dataset.field, v = inp.value;
+    if (f === "stock") { p.stock = inp.checked; }
+    else if (f === "images") { p.images = splitList(v, ","); }
+    else if (f === "details") { p.details = splitList(v, "\n"); }
+    else if (f === "mrp") { p.mrp = v.trim() === "" ? null : num(v); }
+    else if (["heightIn", "widthIn", "weightKg", "price"].indexOf(f) >= 0) { p[f] = num(v); }
+    else { p[f] = v; }
+  });
+}
+function splitList(v, sep) {
+  return v.split(sep).map(function (s) { return s.trim(); }).filter(Boolean);
+}
+function num(v) {
+  var n = parseFloat(String(v).replace(/,/g, ""));
+  return isNaN(n) ? v.trim() : n; // keep raw text if not a number, so validation can flag it
+}
+
+// sync everything currently on screen into state (before generate / reorder)
+function syncAll() {
+  document.querySelectorAll("#productList .card").forEach(syncProduct);
+  syncShop();
+  document.querySelectorAll("#deityList .deityitem").forEach(syncDeity);
+  document.querySelectorAll("#reviewList .reviewitem").forEach(syncReview);
+  document.querySelectorAll("#shopForm .uspitem").forEach(syncUsp);
+}
+
+$("#productList").addEventListener("input", function (e) {
+  var card = e.target.closest(".card"); if (card) markDirty();
+});
+$("#productList").addEventListener("click", function (e) {
+  var btn = e.target.closest("button[data-act]"); if (!btn) return;
+  var card = e.target.closest(".card");
+  var idx = state.products.findIndex(function (x) { return x._uid === card.dataset.uid; });
+  syncProduct(card);
+  if (btn.dataset.act === "del") {
+    if (!confirm("Delete “" + (state.products[idx].name || "this product") + "”?")) return;
+    state.products.splice(idx, 1);
+  } else if (btn.dataset.act === "up" && idx > 0) {
+    state.products.splice(idx - 1, 0, state.products.splice(idx, 1)[0]);
+  } else if (btn.dataset.act === "down" && idx < state.products.length - 1) {
+    state.products.splice(idx + 1, 0, state.products.splice(idx, 1)[0]);
+  }
+  renderProducts(); markDirty();
+});
+$("#addProduct").addEventListener("click", function () {
+  syncAll();
+  state.products.push({
+    _uid: uid(), id: "", name: "", deity: (state.deities[0] || {}).name || "",
+    heightIn: "", widthIn: "", weightKg: "", price: "", mrp: null,
+    finish: "", images: [], badge: "", stock: true, blurb: "", details: []
+  });
+  renderProducts(); markDirty();
+  window.scrollTo(0, document.body.scrollHeight);
+});
+
+/* ==========================================================================
+   SHOP
+   ========================================================================== */
+var SHOP_FIELDS = [
+  ["name", "Business name", "text"],
+  ["nameHindi", "Name in Devanagari", "text", "shown small above the logo, blank to hide"],
+  ["tagline", "Tagline", "text"],
+  ["established", "Established (year)", "text"],
+  ["whatsapp", "WhatsApp number", "text", "digits only, with country code, e.g. 919876543210"],
+  ["phoneDisplay", "Phone (as shown)", "text"],
+  ["phoneDial", "Phone (dial)", "text", "used by the Call button, e.g. +919876543210"],
+  ["email", "Email", "text"],
+  ["address", "Address", "text"],
+  ["mapsUrl", "Google Maps link", "text"],
+  ["hours", "Opening hours", "text"],
+  ["heroImage", "Hero image path", "text"],
+  ["instagram", "Instagram link", "text"],
+  ["facebook", "Facebook link", "text"],
+  ["siteUrl", "Website address", "text", "your live URL, used by the share buttons"]
+];
+function renderShop() {
+  var host = $("#shopForm"); host.innerHTML = "";
+  var card = el("div", { "class": "card" });
+  card.innerHTML = SHOP_FIELDS.map(function (f) {
+    return field(f[1], f[0], f[2], state.shop[f[0]], f[3]);
+  }).join("");
+  host.appendChild(card);
+
+  var uspWrap = el("div", { "class": "card" });
+  uspWrap.innerHTML = '<div class="card-top"><span class="title">Promises (USP strip)</span></div><div id="uspList"></div>' +
+    '<button class="btn btn-ghost btn-sm btn-block" id="addUsp" type="button" style="margin-top:.4rem">+ Add a promise</button>';
+  host.appendChild(uspWrap);
+  renderUsps();
+  $("#addUsp").addEventListener("click", function () {
+    syncShop();
+    state.shop.usps.push({ _uid: uid(), title: "", note: "" });
+    renderUsps(); markDirty();
+  });
+}
+function renderUsps() {
+  var host = $("#uspList"); host.innerHTML = "";
+  if (!state.shop.usps.length) { host.appendChild(el("div", { "class": "empty" }, "No promises yet.")); return; }
+  state.shop.usps.forEach(function (u) {
+    var item = el("div", { "class": "uspitem", "data-uid": u._uid });
+    item.innerHTML =
+      field("Title", "title", "text", u.title) +
+      field("Note", "note", "text", u.note) +
+      '<button class="btn btn-danger btn-sm" data-act="del-usp" type="button">Remove</button>';
+    host.appendChild(item);
+  });
+}
+function syncShop() {
+  document.querySelectorAll("#shopForm .card:first-child [data-field]").forEach(function (inp) {
+    state.shop[inp.dataset.field] = inp.value;
+  });
+  document.querySelectorAll("#shopForm .uspitem").forEach(syncUsp);
+}
+function syncUsp(item) {
+  var u = state.shop.usps.find(function (x) { return x._uid === item.dataset.uid; });
+  if (!u) return;
+  item.querySelectorAll("[data-field]").forEach(function (inp) { u[inp.dataset.field] = inp.value; });
+}
+$("#shopForm").addEventListener("input", markDirty);
+$("#shopForm").addEventListener("click", function (e) {
+  if (e.target.dataset.act === "del-usp") {
+    var item = e.target.closest(".uspitem");
+    state.shop.usps = state.shop.usps.filter(function (x) { return x._uid !== item.dataset.uid; });
+    renderUsps(); markDirty();
+  }
+});
+
+/* ==========================================================================
+   DEITIES
+   ========================================================================== */
+function renderDeities() {
+  var host = $("#deityList"); host.innerHTML = "";
+  if (!state.deities.length) { host.appendChild(el("div", { "class": "empty" }, "No deities yet.")); return; }
+  state.deities.forEach(function (d, i) {
+    var item = el("div", { "class": "deityitem", "data-uid": d._uid });
+    item.innerHTML =
+      '<div class="card-top"><span class="idx">#' + (i + 1) + '</span>' +
+        '<span class="tools">' +
+          '<button class="btn btn-icon" data-act="up" ' + (i === 0 ? "disabled" : "") + '>▲</button>' +
+          '<button class="btn btn-icon" data-act="down" ' + (i === state.deities.length - 1 ? "disabled" : "") + '>▼</button>' +
+          '<button class="btn btn-icon btn-danger" data-act="del">🗑</button>' +
+        '</span></div>' +
+      '<div class="row c2">' +
+        field("Name (English)", "name", "text", d.name, "used as the filter key") +
+        field("Devanagari", "hi", "text", d.hi) +
+      '</div>';
+    host.appendChild(item);
+  });
+}
+function syncDeity(item) {
+  var d = state.deities.find(function (x) { return x._uid === item.dataset.uid; });
+  if (!d) return;
+  item.querySelectorAll("[data-field]").forEach(function (inp) { d[inp.dataset.field] = inp.value; });
+}
+$("#deityList").addEventListener("input", markDirty);
+$("#deityList").addEventListener("click", function (e) {
+  var btn = e.target.closest("button[data-act]"); if (!btn) return;
+  var item = e.target.closest(".deityitem");
+  var idx = state.deities.findIndex(function (x) { return x._uid === item.dataset.uid; });
+  syncDeity(item);
+  if (btn.dataset.act === "del") {
+    if (!confirm("Delete deity “" + state.deities[idx].name + "”? Products using it will need a new deity.")) return;
+    state.deities.splice(idx, 1);
+  } else if (btn.dataset.act === "up" && idx > 0) {
+    state.deities.splice(idx - 1, 0, state.deities.splice(idx, 1)[0]);
+  } else if (btn.dataset.act === "down" && idx < state.deities.length - 1) {
+    state.deities.splice(idx + 1, 0, state.deities.splice(idx, 1)[0]);
+  }
+  renderDeities(); markDirty();
+});
+$("#addDeity").addEventListener("click", function () {
+  syncAll();
+  state.deities.push({ _uid: uid(), name: "", hi: "" });
+  renderDeities(); markDirty();
+});
+
+/* ==========================================================================
+   REVIEWS
+   ========================================================================== */
+function renderReviews() {
+  var host = $("#reviewList"); host.innerHTML = "";
+  if (!state.reviews.length) { host.appendChild(el("div", { "class": "empty" }, "No reviews yet.")); return; }
+  state.reviews.forEach(function (r, i) {
+    var item = el("div", { "class": "reviewitem", "data-uid": r._uid });
+    item.innerHTML =
+      '<div class="card-top"><span class="idx">#' + (i + 1) + '</span>' +
+        '<span class="title">' + esc(r.name || "(no name)") + '</span>' +
+        '<span class="tools"><button class="btn btn-icon btn-danger" data-act="del">🗑</button></span></div>' +
+      '<div class="row c2">' +
+        field("Name", "name", "text", r.name) +
+        field("City", "city", "text", r.city) +
+      '</div>' +
+      '<div class="row c3">' +
+        field("Rating (1-5)", "rating", "number", r.rating) +
+        field("Date", "date", "text", r.date, "YYYY-MM-DD") +
+        field("ID", "id", "text", r.id) +
+      '</div>' +
+      fieldSelect("About product", "product", reviewProductOptions(r.product)) +
+      fieldArea("Review text", "text", r.text);
+    host.appendChild(item);
+  });
+}
+function reviewProductOptions(cur) {
+  var opts = '<option value=""' + (!cur ? " selected" : "") + ">— general review —</option>";
+  opts += state.products.map(function (p) {
+    return '<option value="' + esc(p.id) + '"' + (p.id === cur ? " selected" : "") + ">" + esc(p.name || p.id) + "</option>";
+  }).join("");
+  if (cur && !state.products.some(function (p) { return p.id === cur; })) {
+    opts += '<option value="' + esc(cur) + '" selected>' + esc(cur) + " (missing)</option>";
+  }
+  return opts;
+}
+function syncReview(item) {
+  var r = state.reviews.find(function (x) { return x._uid === item.dataset.uid; });
+  if (!r) return;
+  item.querySelectorAll("[data-field]").forEach(function (inp) {
+    var f = inp.dataset.field;
+    r[f] = (f === "rating") ? num(inp.value) : inp.value;
+  });
+}
+$("#reviewList").addEventListener("input", markDirty);
+$("#reviewList").addEventListener("click", function (e) {
+  var btn = e.target.closest("button[data-act]"); if (!btn) return;
+  var item = e.target.closest(".reviewitem");
+  var idx = state.reviews.findIndex(function (x) { return x._uid === item.dataset.uid; });
+  if (btn.dataset.act === "del") {
+    if (!confirm("Delete this review?")) return;
+    state.reviews.splice(idx, 1); renderReviews(); markDirty();
+  }
+});
+$("#addReview").addEventListener("click", function () {
+  syncAll();
+  var n = state.reviews.length + 1;
+  state.reviews.push({ _uid: uid(), id: "r" + n, name: "", city: "", rating: 5,
+    date: new Date().toISOString().slice(0, 10), product: "", text: "" });
+  renderReviews(); markDirty();
+});
+
+/* ==========================================================================
+   Dirty state
+   ========================================================================== */
+var dirty = false;
+function markDirty() {
+  dirty = true;
+  var s = $("#saveStatus"); s.className = "status"; s.textContent = "Unsaved changes — tap Save changes.";
+}
+window.addEventListener("beforeunload", function (e) {
+  if (dirty) { e.preventDefault(); e.returnValue = ""; }
+});
+
+/* ==========================================================================
+   Validation
+   ========================================================================== */
+function validate() {
+  var errs = [];
+  var ids = {};
+  state.products.forEach(function (p, i) {
+    var where = "Product #" + (i + 1) + " (" + (p.name || "untitled") + ")";
+    if (!String(p.name).trim()) errs.push(where + ": name is required.");
+    if (!String(p.id).trim()) errs.push(where + ": ID is required.");
+    else if (!/^[a-z0-9-]+$/.test(p.id)) errs.push(where + ": ID must be lowercase letters, numbers and dashes only.");
+    else if (ids[p.id]) errs.push(where + ": ID “" + p.id + "” is used more than once.");
+    ids[p.id] = true;
+    if (p.deity && !state.deities.some(function (d) { return d.name === p.deity; }))
+      errs.push(where + ": deity “" + p.deity + "” is not in the Deities list.");
+    ["heightIn", "widthIn", "weightKg", "price"].forEach(function (f) {
+      if (typeof p[f] !== "number" || isNaN(p[f])) errs.push(where + ": " + f + " must be a number.");
+    });
+    if (p.mrp != null && (typeof p.mrp !== "number" || isNaN(p.mrp)))
+      errs.push(where + ": MRP must be a number or blank.");
+  });
+  var dnames = {};
+  state.deities.forEach(function (d, i) {
+    if (!String(d.name).trim()) errs.push("Deity #" + (i + 1) + ": name is required.");
+    else if (dnames[d.name]) errs.push("Deity “" + d.name + "” is listed twice.");
+    dnames[d.name] = true;
+  });
+  state.reviews.forEach(function (r, i) {
+    if (!String(r.name).trim()) errs.push("Review #" + (i + 1) + ": name is required.");
+    var rt = num(r.rating);
+    if (typeof rt !== "number" || rt < 1 || rt > 5) errs.push("Review #" + (i + 1) + ": rating must be 1–5.");
+  });
+  if (!String(state.shop.name || "").trim()) errs.push("Shop details: business name is required.");
+  return errs;
+}
+
+/* ==========================================================================
+   Generate data.js
+   ========================================================================== */
+function q(s) { return JSON.stringify(String(s == null ? "" : s)); }      // safe JS string
+function n(v) { return String(v); }                                        // number as-is
+function arr(a) { return "[" + (a || []).map(q).join(", ") + "]"; }
+function bool(v) { return v ? "true" : "false"; }
+
+function genShop() {
+  var s = state.shop;
+  var out = "const SHOP = {\n";
+  out += "  name:        " + q(s.name) + ",\n";
+  out += "  nameHindi:   " + q(s.nameHindi) + ",\n";
+  out += "  tagline:     " + q(s.tagline) + ",\n";
+  out += "  established: " + q(s.established) + ",\n\n";
+  out += "  whatsapp:    " + q(s.whatsapp) + ",\n\n";
+  out += "  phoneDisplay: " + q(s.phoneDisplay) + ",\n";
+  out += "  phoneDial:    " + q(s.phoneDial) + ",\n";
+  out += "  email:        " + q(s.email) + ",\n\n";
+  out += "  address:  " + q(s.address) + ",\n";
+  out += "  mapsUrl:  " + q(s.mapsUrl) + ",\n";
+  out += "  hours:    " + q(s.hours) + ",\n\n";
+  out += "  heroImage: " + q(s.heroImage) + ",\n\n";
+  out += "  instagram: " + q(s.instagram) + ",\n";
+  out += "  facebook:  " + q(s.facebook) + ",\n\n";
+  out += "  siteUrl: " + q(s.siteUrl) + ",\n\n";
+  out += "  usps: [\n";
+  out += state.shop.usps.map(function (u) {
+    return "    { title: " + q(u.title) + ", note: " + q(u.note) + " }";
+  }).join(",\n");
+  out += "\n  ]\n};\n";
+  return out;
+}
+
+function genProducts() {
+  var out = "const PRODUCTS = [\n";
+  out += state.products.map(function (p) {
+    var b = "  {\n";
+    b += "    id: " + q(p.id) + ",\n";
+    b += "    name: " + q(p.name) + ",\n";
+    b += "    deity: " + q(p.deity) + ",\n";
+    b += "    heightIn: " + n(p.heightIn) + ", widthIn: " + n(p.widthIn) + ", weightKg: " + n(p.weightKg) + ",\n";
+    b += "    price: " + n(p.price) + ", mrp: " + (p.mrp == null ? "null" : n(p.mrp)) + ",\n";
+    b += "    finish: " + q(p.finish) + ",\n";
+    b += "    images: " + arr(p.images) + ",\n";
+    b += "    badge: " + q(p.badge) + ", stock: " + bool(p.stock) + ",\n";
+    b += "    blurb: " + q(p.blurb) + ",\n";
+    b += "    details: " + arr(p.details) + "\n";
+    b += "  }";
+    return b;
+  }).join(",\n");
+  out += "\n];\n";
+  return out;
+}
+
+function genDeities() {
+  var out = "const DEITIES = [\n";
+  out += state.deities.map(function (d) {
+    return "  { name: " + q(d.name) + ", hi: " + q(d.hi) + " }";
+  }).join(",\n");
+  out += "\n];\n";
+  return out;
+}
+
+function genReviews() {
+  var out = "const REVIEWS = [\n";
+  out += state.reviews.map(function (r) {
+    var b = "  {\n";
+    b += "    id: " + q(r.id) + ", name: " + q(r.name) + ", city: " + q(r.city) +
+         ", rating: " + n(num(r.rating)) + ", date: " + q(r.date) + ",\n";
+    b += "    product: " + q(r.product) + ",\n";
+    b += "    text: " + q(r.text) + "\n";
+    b += "  }";
+    return b;
+  }).join(",\n");
+  out += "\n];\n";
+  return out;
+}
+
+var HDR_SHOP =
+"/* ============================================================================\n" +
+"   YOUR SHOP DETAILS  —  EDIT THIS BLOCK FIRST\n" +
+"   Edited with admin.html. You can still hand-edit anything between the quotes.\n" +
+"   ========================================================================== */\n\n";
+var HDR_PROD =
+"\n/* ============================================================================\n" +
+"   PRODUCT CATALOG  —  the order here is the order shown on the site.\n" +
+"   ========================================================================== */\n\n";
+var HDR_DEITY =
+"\n/* ============================================================================\n" +
+"   DEITY CATEGORIES  —  \"hi\" is the Devanagari name shown on the tile.\n" +
+"   ========================================================================== */\n\n";
+var HDR_REV =
+"\n/* ============================================================================\n" +
+"   CUSTOMER REVIEWS  —  reviews shown on the site.\n" +
+"   ========================================================================== */\n\n";
+
+function generate() {
+  return HDR_SHOP + genShop() + HDR_PROD + genProducts() +
+         HDR_DEITY + genDeities() + HDR_REV + genReviews();
+}
+
+/* ==========================================================================
+   Save flow
+   ========================================================================== */
+$("#saveBtn").addEventListener("click", function () {
+  syncAll();
+  var errs = validate();
+  var status = $("#saveStatus");
+  if (errs.length) {
+    status.className = "status bad";
+    status.textContent = errs.length + " thing" + (errs.length > 1 ? "s" : "") + " to fix — see below.";
+    alert("Please fix these first:\n\n• " + errs.slice(0, 12).join("\n• ") +
+          (errs.length > 12 ? "\n…and " + (errs.length - 12) + " more" : ""));
+    return;
+  }
+  $("#outCode").value = generate();
+  $("#ghLink").href = ghEditUrl();
+  var dlg = $("#outDlg");
+  if (typeof dlg.showModal === "function") dlg.showModal(); else dlg.setAttribute("open", "");
+});
+
+function ghEditUrl() {
+  var repo = localStorage.getItem("kb_repo") || DEFAULT_REPO;
+  var branch = localStorage.getItem("kb_branch") || DEFAULT_BRANCH;
+  return "https://github.com/" + repo + "/edit/" + branch + "/assets/js/data.js";
+}
+
+$("#outClose").addEventListener("click", function () { closeDlg($("#outDlg")); });
+$("#copyBtn").addEventListener("click", function () {
+  var ta = $("#outCode");
+  ta.focus(); ta.select();
+  var done = function () { toast("Copied. Now tap Open GitHub and paste."); dirty = false;
+    $("#saveStatus").className = "status ok"; $("#saveStatus").textContent = "Copied — paste it into GitHub to go live."; };
+  if (navigator.clipboard && navigator.clipboard.writeText) {
+    navigator.clipboard.writeText(ta.value).then(done, function () { document.execCommand("copy"); done(); });
+  } else { document.execCommand("copy"); done(); }
+});
+$("#downloadBtn").addEventListener("click", function () {
+  var blob = new Blob([$("#outCode").value], { type: "text/javascript" });
+  var a = document.createElement("a");
+  a.href = URL.createObjectURL(blob); a.download = "data.js";
+  document.body.appendChild(a); a.click(); a.remove();
+  setTimeout(function () { URL.revokeObjectURL(a.href); }, 1000);
+  toast("Downloaded data.js");
+});
+
+/* ==========================================================================
+   Settings dialog
+   ========================================================================== */
+$("#openSettings").addEventListener("click", function () {
+  $("#setRepo").value = localStorage.getItem("kb_repo") || DEFAULT_REPO;
+  $("#setBranch").value = localStorage.getItem("kb_branch") || DEFAULT_BRANCH;
+  var dlg = $("#setDlg");
+  if (typeof dlg.showModal === "function") dlg.showModal(); else dlg.setAttribute("open", "");
+});
+$("#setClose").addEventListener("click", function () { closeDlg($("#setDlg")); });
+$("#setSave").addEventListener("click", function () {
+  localStorage.setItem("kb_repo", $("#setRepo").value.trim().replace(/^https?:\/\/github\.com\//, "").replace(/\/$/, ""));
+  localStorage.setItem("kb_branch", $("#setBranch").value.trim() || DEFAULT_BRANCH);
+  closeDlg($("#setDlg")); toast("Settings saved");
+});
+function closeDlg(dlg) { if (typeof dlg.close === "function") dlg.close(); else dlg.removeAttribute("open"); }
+
+/* ==========================================================================
+   First paint
+   ========================================================================== */
+renderProducts();
+renderShop();
+renderDeities();
+renderReviews();
+</script>
+</body>
+</html>

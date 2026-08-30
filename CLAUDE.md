@@ -61,11 +61,28 @@ build.py                   optional: bundles everything into site-single-file.ht
 - **No payment gateway.** Every path ends in a WhatsApp conversation. This suits
   a shop starting out — no fees, no KYC.
 
+## Built
+
+- **Admin dashboard** (`admin.html`). A self-contained, dependency-free editor
+  the owner opens on the live site. It loads the live `data.js`, edits shop
+  details / products / deities / reviews through form fields, validates (unique
+  lowercase ids, numeric fields, deity must exist — so it can't emit the
+  broken-comma file that blanks the page), and **regenerates a complete, valid
+  `data.js`** for the owner to copy-paste into GitHub's web editor and commit.
+  This kept the "no backend, no build, no secrets" constraints: it does NOT
+  commit for the owner, so the earlier plan's GitHub API + Cloudflare Access auth
+  was not needed, and products stayed in `data.js` rather than moving to JSON
+  (which would have broken the single-file build and `file://` use). The generator
+  round-trips the current data exactly — there is a check for this in the notes;
+  if you change `data.js`'s shape, update `admin.html`'s `gen*()` functions to
+  match. Repo/branch for the "Open GitHub" link are configurable in-page and
+  stored in `localStorage`.
+
 ## Next steps discussed but not built
 
-1. **Admin dashboard** (`admin.html`) so the owner can add/remove products and
-   change prices without touching code. Move products to `assets/data/products.json`
-   first. Save by committing to GitHub via the API; auth via Cloudflare Access.
+1. **Direct-commit upgrade for `admin.html`** — optionally let the owner paste a
+   GitHub token (or use Cloudflare Access) so Save commits for them, instead of
+   copy-paste. The copy-paste flow stays the zero-setup default.
 2. **WhatsApp control** — a webhook that lets the owner text changes. Build the
    dashboard's operations first; the bot should call the same ones.
 

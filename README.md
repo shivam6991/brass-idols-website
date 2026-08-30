@@ -123,6 +123,27 @@ still paste it in, but you stop losing any. Only move to a real backend
 The repository is set up so the whole loop — edit, commit, live site — can
 happen from a phone, without a laptop.
 
+**The easy way: the admin page.** Open `admin.html` on your live site (for
+example `yoursite.com/admin.html`). It reads your current products, prices, shop
+details and reviews and lets you edit them with normal form fields — no code. Add
+or remove an idol, change a price, toggle "in stock", reorder the list, then tap
+**Save changes**. It checks your entries (so you can't produce the broken-comma
+file that blanks the page) and gives you the finished `data.js`:
+
+1. Tap **Copy**.
+2. Tap **Open GitHub** — it opens the editor for `assets/js/data.js`.
+3. Select everything there, delete it, paste, and tap **Commit changes**.
+4. Your host rebuilds within a minute and the site is updated.
+
+The page never changes your site on its own — you always commit the file
+yourself, so there is nothing to log into and no password to store. Photos still
+need to be uploaded to `assets/img/products/` separately (type the file name in
+the Photos box, then upload the matching image through GitHub). Editing for a
+different shop's repo? Tap **Repo settings** once to point the "Open GitHub"
+link at it.
+
+If you would rather edit the file by hand, the rest of this section still applies.
+
 **Connect the repo to your host once.** Cloudflare Pages and Netlify both offer
 "deploy from GitHub": point them at this repo and every push republishes the site
 automatically. After that you never touch the host again.
