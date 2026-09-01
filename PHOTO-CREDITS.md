@@ -35,15 +35,35 @@ Replace them in this order:
 
 Find any of them at `pexels.com/photo/<id>/`.
 
-## The nine products still on drawn placeholders
+## The nine products waiting for a photo
 
-Superfine Ganesha · Lakshmi Ganesh Pair · Radha Krishna · Standing Nandi ·
-Durga Mahishasurmardini · Saraswati with Veena · Blessing Buddha · Ram Darbar ·
-Kalpavriksha Wish Tree
+`data.js` now points each of these nine at a file name (below). Until that file
+exists in `assets/img/products/`, the product keeps showing the drawn brass
+placeholder — nothing looks broken. **To fill one in: download the suggested
+Pexels photo, save it with the exact file name in the middle column, and upload
+it to `assets/img/products/`.** No `data.js` edit needed — the name is already
+wired.
 
-These show a drawn brass placeholder with the deity's name in Devanagari, which
-looks deliberate rather than broken. Add a file to `assets/img/products/` and
-list it in `images` in `data.js` to replace one.
+All suggestions are Pexels photos ([Pexels licence](https://www.pexels.com/license/):
+free for commercial use, no attribution required). They are only suggestions —
+pick anything on Pexels you like better, just keep the file name. If you swap in
+a different photo, note its Pexels id here so this list stays true.
+
+| Product | Save the photo as | Suggested Pexels photo |
+|---|---|---|
+| Superfine Ganesha | `ganesha-superfine-12-a.jpg` | [2280845](https://www.pexels.com/photo/brass-colored-lord-ganesha-figurine-2280845/) — brass Ganesha figurine |
+| Lakshmi Ganesh Pair | `lakshmi-ganesh-pair-5-a.jpg` | browse [pexels.com/search/lakshmi ganesh image](https://www.pexels.com/search/lakshmi%20ganesh%20image/) — pick a matched pair |
+| Radha Krishna | `radha-krishna-14-a.jpg` | [8051165](https://www.pexels.com/photo/close-up-photo-of-radha-and-krishna-statues-8051165/) — Radha & Krishna statues |
+| Standing Nandi | `nandi-standing-45-a.jpg` | browse [pexels.com/search/nandi](https://www.pexels.com/search/nandi/) — pick a brass Nandi |
+| Durga Mahishasurmardini | `durga-mahishasurmardini-12-a.jpg` | [17315142](https://www.pexels.com/photo/figure-of-the-hindu-goddess-durga-with-mahishasura-at-her-feet-17315142/) — Durga with Mahishasura |
+| Saraswati with Veena | `saraswati-veena-10-a.jpg` | [30634691](https://www.pexels.com/photo/patung-saraswati-yang-rumit-dengan-veena-30634691/) — Saraswati with veena |
+| Blessing Buddha | `buddha-blessing-17-a.jpg` | [1585716](https://www.pexels.com/photo/brass-buddha-figurine-on-black-surface-1585716/) — brass Buddha figurine |
+| Ram Darbar | `ram-darbar-12-a.jpg` | [15902534](https://www.pexels.com/photo/beautiful-idols-of-lord-rama-goddess-sita-lord-hanuman-and-laxman-being-worshipped-at-a-hindu-temple-in-mumbai-india-15902534/) — Ram, Sita, Lakshman, Hanuman |
+| Kalpavriksha Wish Tree | `kalpavriksha-18-a.jpg` | browse [pexels.com/search/brass tree](https://www.pexels.com/search/brass%20tree/) — a brass wish tree / decor |
+
+Aim for a plain, dark background and roughly square, about 1000 × 1000 px and
+under 300 KB (compress free at squoosh.app) so it matches the seven photos
+already on the site.
 
 ## Shooting your own
 

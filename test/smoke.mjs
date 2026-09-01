@@ -64,7 +64,13 @@ const { window } = dom;
 const doc = window.document;
 await new Promise(r => setTimeout(r, 300));
 
-const PRODUCTS_COUNT_WITH_PHOTOS = window.eval("PRODUCTS.filter(p => p.images.length).length");
+// "Real photo" means the referenced file actually exists in assets/img/products/.
+// Every product now names a photo file in data.js, but a name only becomes a real
+// photo once the file is uploaded — so count files on disk, not just references.
+const productImgDir = path.join(ROOT, "assets", "img", "products");
+const presentImgs = new Set(fs.readdirSync(productImgDir));
+const PRODUCTS_COUNT_WITH_PHOTOS = window.eval("PRODUCTS")
+  .filter(p => (p.images || []).some(f => presentImgs.has(f))).length;
 const $ = s => doc.querySelector(s);
 const $$ = s => Array.from(doc.querySelectorAll(s));
 const checks = [];

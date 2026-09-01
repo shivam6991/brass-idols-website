@@ -79,7 +79,7 @@ const PRODUCTS = [
     heightIn: 12, widthIn: 8, weightKg: 3.2,
     price: 12900, mrp: 16500,
     finish: "Mirror polish with lacquer",
-    images: [],
+    images: ["ganesha-superfine-12-a.jpg"],
     badge: "New", stock: true,
     blurb: "Hollow-cast in the superfine style, so the piece carries a twelve-inch presence at roughly half the weight of a solid idol. Crown, jewellery and dhoti folds are chased by hand after casting.",
     details: ["Hollow superfine casting", "Lacquered to slow tarnishing", "Ideal as a wedding or housewarming gift"]
@@ -103,7 +103,7 @@ const PRODUCTS = [
     heightIn: 5, widthIn: 7, weightKg: 2.1,
     price: 5400, mrp: 6900,
     finish: "Antique",
-    images: [],
+    images: ["lakshmi-ganesh-pair-5-a.jpg"],
     badge: "Bestseller", stock: true,
     blurb: "The pair most families ask for at Diwali, cast to match in scale and finish so they sit level beside each other on the puja chowki.",
     details: ["Sold as a set of two", "Matched patina across both idols", "Combined weight 2.1 kg"]
@@ -127,7 +127,7 @@ const PRODUCTS = [
     heightIn: 14, widthIn: 11, weightKg: 6.5,
     price: 24500, mrp: 31000,
     finish: "Antique with polished faces",
-    images: [],
+    images: ["radha-krishna-14-a.jpg"],
     badge: "", stock: true,
     blurb: "A drawing-room piece. Radha and Krishna stand together beneath a cast prabhavali arch worked with vines, the whole group rising from one base.",
     details: ["Arch and figures cast separately, assembled", "Faces polished bright against antique body", "Needs a 12-inch deep shelf"]
@@ -163,7 +163,7 @@ const PRODUCTS = [
     heightIn: 4.5, widthIn: 6, weightKg: 1.2,
     price: 3600, mrp: 4500,
     finish: "Antique elegance",
-    images: [],
+    images: ["nandi-standing-45-a.jpg"],
     badge: "", stock: true,
     blurb: "A small Nandi to face your Shivling or Shiva idol, with the bell collar and hump detailed in the traditional South Indian manner.",
     details: ["Sized to sit before an 8–12 inch Shiva", "Solid cast", "Lightest piece in the collection"]
@@ -187,7 +187,7 @@ const PRODUCTS = [
     heightIn: 12, widthIn: 10, weightKg: 5.8,
     price: 21900, mrp: 27500,
     finish: "Antique with gold highlights",
-    images: [],
+    images: ["durga-mahishasurmardini-12-a.jpg"],
     badge: "", stock: true,
     blurb: "Eight-armed Durga astride the lion at the moment of the strike, each weapon cast and set by hand. Ordered heavily through Navratri.",
     details: ["Eight arms, each weapon separately finished", "Lion and figure on a shared base", "Order 3 weeks before Navratri"]
@@ -199,7 +199,7 @@ const PRODUCTS = [
     heightIn: 10, widthIn: 6, weightKg: 3.1,
     price: 10400, mrp: 13000,
     finish: "Mirror polish",
-    images: [],
+    images: ["saraswati-veena-10-a.jpg"],
     badge: "", stock: true,
     blurb: "Seated Sharada with the veena across her lap and the hamsa at the base, polished bright so the instrument's strings catch the light.",
     details: ["Veena strings cast in relief", "Popular for study rooms and schools", "Bright polish, lacquer sealed"]
@@ -211,7 +211,7 @@ const PRODUCTS = [
     heightIn: 17, widthIn: 11, weightKg: 9.4,
     price: 31300, mrp: 39500,
     finish: "Dual tone",
-    images: [],
+    images: ["buddha-blessing-17-a.jpg"],
     badge: "", stock: true,
     blurb: "Standing Buddha with the right hand raised in abhaya mudra, robe folds falling in unbroken lines from shoulder to base. A hotel-lobby scale piece.",
     details: ["Tallest piece we keep in stock", "Robe polished, skin left antique", "Crated on a wooden pallet"]
@@ -223,7 +223,7 @@ const PRODUCTS = [
     heightIn: 12, widthIn: 14, weightKg: 8.2,
     price: 34900, mrp: 43000,
     finish: "Antique with gold highlights",
-    images: [],
+    images: ["ram-darbar-12-a.jpg"],
     badge: "Made to order", stock: false,
     blurb: "Ram, Sita and Lakshman standing with Hanuman kneeling before them, all four on a single cast platform with a shared prabhavali behind.",
     details: ["Four figures on one base", "Made to order, 4–5 weeks", "Advance of 40% to begin casting"]
@@ -247,7 +247,7 @@ const PRODUCTS = [
     heightIn: 18, widthIn: 14, weightKg: 6.0,
     price: 22400, mrp: 28000,
     finish: "Antique with polished leaves",
-    images: [],
+    images: ["kalpavriksha-18-a.jpg"],
     badge: "New", stock: true,
     blurb: "The wish-fulfilling tree, each leaf cast and set into the branch by hand so no two trees are identical. Sits well on a console or entrance table.",
     details: ["Roughly 90 hand-set leaves", "Every piece slightly different", "Not a puja idol — decor"]
